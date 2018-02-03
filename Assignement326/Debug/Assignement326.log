@@ -1,0 +1,4 @@
+﻿  Source.cpp
+c:\users\jeremy\desktop\326\assignement326\assignement326\source.cpp(1): warning C4067: jetons inattendus après la directive du préprocesseur - saut de ligne attendu
+c:\users\jeremy\desktop\326\assignement326\assignement326\source.cpp(5): warning C4244: 'argument' : conversion de 'time_t' en 'unsigned int', perte possible de données
+  Assignement326.vcxproj -> C:\Users\jeremy\Desktop\326\Assignement326\Debug\Assignement326.exe
