@@ -7,6 +7,8 @@
 #include <stdlib.h>
 #include <sstream>
 
+#define MEMORY_SIZE 124
+
 // Memory Block Table structure
 typedef struct s_mbt {
 	int size;

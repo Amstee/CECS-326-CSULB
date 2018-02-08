@@ -5,7 +5,7 @@
 void initialize(mbt &table)
 {
 	srand(time(NULL));
-	table.size = 124;
+	table.size = MEMORY_SIZE;
 	for (int i = 0; i < table.size; i++) {
 		table.content[i] = true;
 	}
@@ -15,12 +15,15 @@ void initialize(mbt &table)
 void showMBT(mbt const& table) {
 	std::cout << "Memory Block Table size : " << table.size << std::endl;
 	std::cout << "Memory Block Table content : " << std::endl;
-	for (int i = 0; i < 124; i++) {
+	for (int i = 0; i < MEMORY_SIZE; i++) {
 		if (table.content[i] == true) {
 			std::cout << "11111111 ";
 		}
 		else {
 			std::cout << "00000000 ";
+		}
+		if ((i + 1) % 8 == 0) {
+			std::cout << std::endl;
 		}
 	}
 	std::cout << std::endl;
@@ -70,7 +73,7 @@ int main(int argc, char **argv)
 					ready_queue.push_back({ pid, tab });
 					// We update the MBT content
 					for (int i = 0; i < blocks; i++) {
-						table.content[124 - table.size + i] = false;
+						table.content[MEMORY_SIZE - table.size + i] = false;
 					}
 					table.size -= blocks;
 					std::cout << "Page table size : " << randsize << " bits or " << blocks << "bytes " << std::endl;
@@ -92,13 +95,14 @@ int main(int argc, char **argv)
 					for (auto it = ready_queue.begin(); it != ready_queue.end(); ++it) {
 						if (it->pid == value) {
 							// Update the MBT content in order to free the space used by the process
-							for (int c = 0; c < it->table.size; c++) {
-								table.content[124 - table.size + c] = true;
+							for (int c = 0; c <= it->table.size; c++) {
+								table.content[MEMORY_SIZE - table.size - c] = true;
 							}
 							table.size += it->table.size;
 							delete (it->table.content); // Delete the table.content which is dynamicaly allocated on the heap
 							ready_queue.erase(it);
 							found = true;
+							showMBT(table);
 							break; // Exit the for loop
 						}
 					}
@@ -126,6 +130,9 @@ int main(int argc, char **argv)
 					else {
 						break;
 					}
+				}
+				else {
+					return (0);
 				}
 				break;
 			default:
