@@ -18,7 +18,7 @@ typedef struct s_mbt {
 // Page table structure
 typedef struct s_page {
 	int size;
-	bool *content;
+	int *indexes;
 } page;
 
 // PCB structure

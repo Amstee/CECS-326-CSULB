@@ -29,6 +29,21 @@ void showMBT(mbt const& table) {
 	std::cout << std::endl;
 }
 
+int *getBlocks(mbt & table, int blocks) 
+{
+	int *arr = new int[blocks];
+	int counter = 0;
+
+	for (int i = 0; i < MEMORY_SIZE && counter < blocks; i++) {
+		if (table.content[i] != 0) {
+			table.content[i] = false;
+			arr[counter] = i;
+			counter++;
+		}
+	}
+	return (arr);
+}
+
 int main(int argc, char **argv)
 {
 	std::list<pcb> ready_queue; //ready_queue containing the PCBs, I use a list instead of a queue to iterate more easily over its content in order to display processes ID
@@ -68,13 +83,9 @@ int main(int argc, char **argv)
 					blocks = (randsize / 8) + ((randsize % 8) > 0 ? 1 : 0);
 					// I initialize the Page table
 					tab.size = blocks;
-					tab.content = new bool[blocks];
+					tab.indexes = getBlocks(table, blocks);
 					// Add the PCB to the ready Queue
 					ready_queue.push_back({ pid, tab });
-					// We update the MBT content
-					for (int i = 0; i < blocks; i++) {
-						table.content[MEMORY_SIZE - table.size + i] = false;
-					}
 					table.size -= blocks;
 					std::cout << "Page table size : " << randsize << " bits or " << blocks << "bytes " << std::endl;
 					std::cout << "PCB process id : " << pid << std::endl;
@@ -95,11 +106,11 @@ int main(int argc, char **argv)
 					for (auto it = ready_queue.begin(); it != ready_queue.end(); ++it) {
 						if (it->pid == value) {
 							// Update the MBT content in order to free the space used by the process
-							for (int c = 0; c <= it->table.size; c++) {
-								table.content[MEMORY_SIZE - table.size - c] = true;
+							for (int c = 0; c < it->table.size; c++) {
+								table.content[it->table.indexes[c]] = true;
 							}
 							table.size += it->table.size;
-							delete (it->table.content); // Delete the table.content which is dynamicaly allocated on the heap
+							delete (it->table.indexes); // Delete the table.content which is dynamicaly allocated on the heap
 							ready_queue.erase(it);
 							found = true;
 							showMBT(table);
@@ -123,7 +134,7 @@ int main(int argc, char **argv)
 						showMBT(table);
 						for (auto it = ready_queue.begin(); it != ready_queue.end(); ++it) {
 							std::cout << it->pid << std::endl;
-							delete (it->table.content); // We delete the Page Table content which is the only one stored dynamicaly on the heap
+							delete (it->table.indexes); // We delete the Page Table content which is the only one stored dynamicaly on the heap
 						}
 						return (0); // Exit code 0, process ended normally
 					}
